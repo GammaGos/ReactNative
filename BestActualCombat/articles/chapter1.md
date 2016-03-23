@@ -137,7 +137,7 @@ var documentedCommands = {
 ####1、私有NPM搭建
 
 虽然上面讲的国内镜像，已使NPM的下载速度很快啦，但是仍然不如在自己内网架设个NPM私服务器，给团队成员提供更快捷的下载速度。架设私服，除了速度快以外，还有一个重要的原因就是一些内部的隐私模块也可以发在私服上供内部成员使用。
-市面上的NPM私服也有很多，这里推荐的是一个叫“sinopia”的NPM私服。“sinopia”的做法是优先从自己的仓库中拉取模块，如果发现没有，便从远端的NPM服务器拉取。也许有的开发者早已注意到，这个私服其实在“react-native-cli”的NPM库中“https://www.npmjs.com/package/react-native-cli”就有介绍，笔者猜想应该是Facebook也推荐诸位使用“sinopia”来搭建NPM私服吧。“sinopia”的github地址为：https://github.com/rlidwka/sinopia。“sinopia”的搭建比较简单，步骤如下：
+市面上的NPM私服也有很多，这里推荐的是一个叫“sinopia”的NPM私服。“sinopia”的做法是优先从自己的仓库中拉取模块，如果发现没有，便从远端的NPM服务器拉取。也许有的开发者早已注意到，这个私服其实在“react-native-cli”的NPM库中[react-native-cli](https://www.npmjs.com/package/react-native-cli)就有介绍，笔者猜想应该是Facebook也推荐诸位使用“sinopia”来搭建NPM私服吧。“sinopia”的github地址为：[sinopia](https://github.com/rlidwka/sinopia)。“sinopia”的搭建比较简单，步骤如下：
 
 #####-安装命令：
 
@@ -189,7 +189,7 @@ packages:
 logs:
   - {type: stdout, format: pretty, level: http}
 ```
-如果想看更完整的配置可以参考这里https://github.com/rlidwka/sinopia/blob/master/conf/full.yaml。
+如果想看更完整的配置可以参考这里[full.yaml](https://github.com/rlidwka/sinopia/blob/master/conf/full.yaml)。
 
 #####-创建新用户
 
@@ -345,7 +345,7 @@ d、rnvm接收到两个参数之后的行为：
 
 这只是个use命令的执行分析。也可以像nvm一样，实现rnvm install、rnvm ls、rnvm current等命令。
 
-rnmv的github地址：https://github.com/GammaGos/ReactNative/rnvm/
+rnmv的github地址：[rnvm](https://github.com/GammaGos/ReactNative/rnvm/)
 
 
 #####-rnvm的使用场景
