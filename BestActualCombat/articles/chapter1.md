@@ -224,7 +224,7 @@ Email：xxx@xx.com
 $ npm publish
 ```
 
-若没有“package.json”文件的化，需先执行“npm init”进行创建，然后执行上面的命令即可将模块推送到自己的NPM服务器上了。这样我们在安装该模块的时候，便是从自己的NPM服务器上下载了。
+若没有“package.json”文件的话，需先执行“npm init”进行创建，然后执行上面的命令即可将模块推送到自己的NPM服务器上了。这样我们在安装该模块的时候，便是从自己的NPM服务器上下载了。
 
 #####-远端访问
 
@@ -290,12 +290,12 @@ $ npm publish
 
 ####2、实现多版本管理
 
-如果说sinopia是用来解决速度的问题，那么多版本的管理可以说是用来解决体积的问题。做过node.js开发的同学，都清楚nvm，它是nodejs的版本管理工具，甚至包括React Native的官网也有谈到使用nvm来安装node.js。在react-native版本迭代如此频繁的阶段，居然没有react-native的版本管理工具，这让开发人员们很是受伤。所以，这里将尝试着设计一个react-native的版本管理工具，我们可以亲切的叫他rnvm（react-native version manager）。在了解rnvm的思路前，先了解下rnvm的使用场景.
+如果说sinopia是用来解决速度的问题，那么多版本的管理可以说是用来解决体积的问题。做过node.js开发的同学，都清楚nvm，它是nodejs的版本管理工具，甚至包括React Native的官网也有谈到使用nvm来安装node.js。在react-native版本迭代如此频繁的阶段，居然没有react-native的版本管理工具，这让开发人员们很是受伤。所以，这里将尝试着设计一个react-native的版本管理工具，我们可以亲切的叫它rnvm（react-native version manager）。在了解rnvm的思路前，先了解下rnvm的使用场景.
 
 
 #####-rnvm的使用场景
 
-rnvm如其名字中的那样，主要是对react-native的版本进行管理的。那么她的使用场景都有哪些呢。这的从一个React Native项目的的获得方式说起。通常情况下有如下几种方式：
+rnvm如其名字中的那样，主要是对react-native的版本进行管理的。那么它的使用场景都有哪些呢。这的从一个React Native项目的的获得方式说起。通常情况下有如下几种方式：
 
 a、通过react-native命令初始化项目获得
 
