@@ -87,7 +87,7 @@ if (args[0] === 'init') {
 ```
 其中代码1是动态生成package.json，代码2是在本地安装react-native模块。到此，之前提到的“React Native 初始化项目困难”也就不难理解啦，原因都是npm惹的祸。
 
-既然已经看到这里啦，那就顺带的完整的了解下react-native这个命令。除了“react-native init”命令外，官网还提供了 “react-native bundle”、“react-native run-android”等命令，而index.js稳重却只有“init”命令。那其他命令又是怎么来的呢。带着疑问，笔者又找到了如下的代码：
+既然已经看到这里啦，那就顺带完整的介绍下react-native这个命令。除了“react-native init”命令外，官网还提供了 “react-native bundle”、“react-native run-android”等命令，而index.js文中却只有“init”命令。那其他命令又是怎么来的呢。带着疑问，笔者又找到了如下的代码：
 
 ```
 var CLI_MODULE_PATH = function() {
@@ -349,6 +349,7 @@ $ rnvm use 0.20.0
 在这个过程中发生了些什么呢？
 
 a、先进入mycloneproject项目的根目录。
+
 b、设置全局模块安装目录为~/prex_node_modules/node_modules。
 
 c、设置npm的镜像指向自己的sinopia服务器，这样之后的所有npm命令就会从sinopia服务器获取模块了。
@@ -407,7 +408,7 @@ rnmv的github地址：[rnvm](https://github.com/GammaGos/ReactNative/rnvm/)
 
 ###面临的问题
 
-通常项目中，App需要开发Android和iOS两个版本,经常会用到一些图片，并需要将这些图片打入App中。当开发iOS版本时，需要手动加载这些图片资源到xcode中。当开发Android版本时又需要手动的加载一次。这样，当某天某个图片需要更新时，就需要对Android和iOS都进行修改。如果要是能够让两个版本引用同一个图片,那么就会使开发变的简便。
+通常项目中，App需要开发Android和iOS两个版本,经常会用到一些图片，并需要将这些图片打入App中。当开发iOS版本时，需要手动加载这些图片资源到xcode中。当开发Android版本时又需要手动的加载一次。这样，当某天某个图片需要更新时，就需要对Android和iOS都进行修改。如果要是能够让两个版本引用同一个图片,那么就会使开发变得简便。
 
 ###解决办法
 
