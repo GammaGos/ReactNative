@@ -66,7 +66,7 @@ react-native init AwesomeProject
   "react-native": "index.js"
 },
 ```
-翻阅资料得知，"bin"是由多个“{ 命令名：文件名 }”组成的一个map。在安装的时候会将每个“命令名”链接到prefix/bin（全局初始化）或者./node_modules/.bin/（本地初始化）。上面代码在安装的时候，会将index.js链接到/usr/local/bin/react-native。这样使用"react-native init"进行初始化的困惑也就可以理解啦。那么这个“react-native init”究竟做了什么呢。继续跟踪，打开index.js，其中的部分代码片段：
+这里简单介绍下bin属性，"bin"是由多个“{ 命令名：文件名 }”组成的一个map。在安装的时候会将每个“命令名”链接到prefix/bin（全局初始化）或者./node_modules/.bin/（本地初始化）。上面代码在安装的时候，会将index.js链接到/usr/local/bin/react-native。这样使用"react-native init"进行初始化的困惑也就可以理解啦。那么这个“react-native init”究竟做了什么呢。继续跟踪，打开index.js，其中的部分代码片段：
 
 ```
 if (args[0] === 'init') {
@@ -138,7 +138,7 @@ var documentedCommands = {
 
 ####1、私有NPM搭建
 
-虽然上面讲的国内镜像，已使NPM的下载速度很快啦，但是仍然不如在自己内网架设个NPM私服务器，给团队成员提供更快捷的下载速度。架设私服，除了速度快以外，还有一个重要的原因就是一些内部的隐私模块也可以发在私服上供内部成员使用。
+虽然上面讲的国内镜像，已使NPM的下载速度很快啦，但是仍然不如在自己内网架设个NPM私有服务器，给团队成员提供更快捷的下载速度。架设私服，除了速度快以外，还有一个重要的原因就是一些内部的隐私模块也可以发在私服上供内部成员使用。
 市面上的NPM私服也有很多，这里推荐的是一个叫“sinopia”的NPM私服。“sinopia”的做法是优先从自己的仓库中拉取模块，如果发现没有，便从远端的NPM服务器拉取。也许有的开发者早已注意到，这个私服其实在“react-native-cli”的NPM库中[react-native-cli](https://www.npmjs.com/package/react-native-cli)就有介绍，笔者猜想应该是Facebook也推荐诸位使用“sinopia”来搭建NPM私服吧。“sinopia”的github地址为：[sinopia](https://github.com/rlidwka/sinopia)。“sinopia”的搭建比较简单，步骤如下：
 
 #####-安装命令：
@@ -289,7 +289,24 @@ npm publish
 
 ####2、实现多版本管理
 
-如果说sinopia是用来解决速度的问题，那么多版本的管理可以说是用来解决体积的问题。做过node.js开发的同学，都清楚nvm，它是nodejs的版本管理工具，甚至包括React Native的官网也有谈到使用nvm来安装node.js。在react-native版本迭代如此频繁的阶段，居然没有react-native的版本管理工具，这让开发人员们很是受伤。所以，这里将尝试着设计一个react-native的版本管理工具，我们可以亲切的叫他rnvm（react-native version manager）。在了解rnvm的思路前，先了解下rnvm的目录结构.
+如果说sinopia是用来解决速度的问题，那么多版本的管理可以说是用来解决体积的问题。做过node.js开发的同学，都清楚nvm，它是nodejs的版本管理工具，甚至包括React Native的官网也有谈到使用nvm来安装node.js。在react-native版本迭代如此频繁的阶段，居然没有react-native的版本管理工具，这让开发人员们很是受伤。所以，这里将尝试着设计一个react-native的版本管理工具，我们可以亲切的叫他rnvm（react-native version manager）。在了解rnvm的思路前，先了解下rnvm的使用场景.
+
+
+#####-rnvm的使用场景
+
+rnvm如其名字中的那样，主要是对react-native的版本进行管理的。那么她的使用场景都有哪些呢。这的从一个React Native项目的的获得方式说起。通常情况下有如下几种方式：
+
+a、通过react-native命令初始化项目获得
+
+b、通过从github上clone获得
+
+c、通过拷贝获得
+
+对于a中的使用场景，在react-native初始化项目的时候，正常情况下rnvm是插不上手的。如果真要用rnvm，需要侵入/usr/local/lib/node_modules/react-native-cli/index.js文件，将run('npm install --save react-native'改为run('rnvm use ',或者也可以给rnvm添加一个init命令来取代react-native init命令,使用方式为rnvm init AwesomeProject。
+
+对于b、c场景，可以直接使用rnvm命令进行处理。
+
+然而，这并不是rvnm的优势。rnvm的核心思想是将react-native模块安装在全局目录下，这样每个React Native项目在使用的时候，不需要在本地目录中安装一份，只需要调用全局目录中的react-native即可，给开发者节省了不少的空间。再者rnvm给React Native项目中的对react-native版本的使用带来了灵活性，所以rnvm更适合多React Native项目的开发。
 
 #####-rnvm的目录结构
 
@@ -316,24 +333,28 @@ react_native_modules
 
 #####-rnvm的执行流程
 
-这里需要结合一个场景来分析rnvm的执行流程，某天开发人员从github clone了一份别人写的React Native项目的代码，重命名为mycloneproject，想在本地运行起来，正常情况下应该是进入mycloneproject项目的根目录，然后执行npm install。这样就会将package.json中指定的所有依赖模块都安装在当前目录的node_modules目录中。那么使用rnvm是怎么安装的呢。
+这里需要结合一个场景来分析rnvm的执行流程，某天开发人员从github clone了一份别人写的React Native的代码，重命名为mycloneproject，想在本地运行起来，正常情况下应该是进入mycloneproject项目的根目录，然后执行npm install。这样就会将package.json中指定的所有依赖模块都安装在当前目录的node_modules目录中。那么使用rnvm是怎么安装的呢。
 
-现在假设rnvm只有一个use命令，格式为 rnvm use version。具体的执行代码如下：
+现在假设rnvm只有一个use命令，格式为 rnvm use version。
+
+具体的执行代码如下：
 
 ```
 $ cd mycloneproject
 $ npm config set prefix ~/prex_node_modules/node_modules
+$ npm set registry http://host:port/
 $ rnvm use 0.20.0
 ```
 在这个过程中发生了些什么呢？
 
-a、先进入mycloneproject项目的根目录
+a、先进入mycloneproject项目的根目录。
+b、设置全局模块安装目录为~/prex_node_modules/node_modules。
 
-b、设置全局模块安装目录为~/prex_node_modules/node_modules
+c、设置npm的镜像指向自己的sinopia服务器，这样之后的所有npm命令就会从sinopia服务器获取模块了。
 
-c、执行rnvm use命令。代码中看到可以使用全局“rnvm”命令，这就要求rnvm是一个node.js的模块，且该模块实现了package.jon中的bin配置，使其支持全局安装。
+d、执行rnvm use命令。代码中看到可以使用全局“rnvm”命令，这就要求rnvm是一个node.js的模块，且该模块实现了package.jon中的bin配置，使其支持全局安装。
 
-d、rnvm接收到两个参数之后的行为：
+e、rnvm接收到两个参数之后的行为：
 
 +	在拿到参数后，rvnm会去react_native_modules/react-native中查找是否有v0.20.0目录，如果有则进入该目录，并执行npm link
 
@@ -350,28 +371,36 @@ d、rnvm接收到两个参数之后的行为：
 rnmv的github地址：[rnvm](https://github.com/GammaGos/ReactNative/rnvm/)
 
 
-#####-rnvm的使用场景
 
-rnvm如其名字中的那样，主要是对react-native的版本进行管理的。那么她的使用场景都有哪些呢。这的从一个React Native项目的的获得方式说起。通常情况下有如下几种方式：
-
-a、通过react-native初始化项目获得
-
-b、通过从github上clone获得
-
-c、通过拷贝获得
-
-对于a中的使用场景，在react-native初始化项目的时候，正常情况下rnvm是插不上手的。如果真要用rnvm，需要侵入/usr/local/lib/node_modules/react-native-cli/index.js文件，将run('npm install --save react-native'改为run('rnvm use ',或者也可以给rnvm添加一个init命令来取代react-native init命令,使用方式为rnvm init AwesomeProject。
-
-对于b、c场景，可以直接使用rnvm命令进行处理。
-
-然而，这并不是rvnm的优势。rnvm的核心思想是将react-native模块安装在全局目录下，这样每个React Native项目在使用的时候，不需要在本地目录中安装一份，只需要调用全局目录中的react-native即可，给开发者节省不好少的空间。再者rnvm给React Native项目中的对react-native版本的使用带来了灵活性，所以rnvm更适合多React Native项目的开发。
 
 ####3、完整架构
 ![](../images/rnvm.png)
 
 图1 基于rnvm的开发架构图
 
-基于上面的图形，这里做简短的描述。总体分为两个大的部分，一个是server端，一个是client端。server端是指sinopia服务所在的端，主要负责提供NPM私有服务。在搭建该端的时候，需将常用的react-native版本和react-native-cli版本都推送到该服务器上，便于之后客户端的使用。client端是指用户端也就是开发者端。该端负责nodejs、npm、rnvm等环境的搭建以及React Native项目的构建。该端属于消费端是主战场。在该端主要发生的逻辑为，开发者先构建一个React Native项目，然后使用rnvm来安装依赖模块，rnmv接着在指定的目录下判断是否有合适的模块，有的话会先做npm link的操作，再做npm install的操作，没有的话会向sinopia服务器发送请求，请求下载需要的模块，并放入指定的目录中，待模块下载完毕后，在执行npm link操作和npm install操作，来达到依赖模块的安装。
+基于上面的图形，这里做简短的描述。总体分为两个大的部分，一个是server端，一个是client端。server端是指sinopia服务所在的端，主要负责提供NPM私有服务。在搭建该端的时候，需将常用的react-native版本和react-native-cli版本都推送到该服务器上，便于之后客户端的使用。client端是指用户端也就是开发者端。该端负责React Native项目的构建。该端属于消费端是主战场。
+在上图中，该端主要发生的逻辑为：
+
+1、开发者先构建了一个React Native ProjectA项目
+
+2、然后使用rnvm来安装依赖模块，
+
+3、rnmv接着在指定的目录下判断是否有对应的模块，
+
+4、有的话会先找到对应的模块，然后再去模块根目录下做npm link的操作，然后回到React Native ProjectA项目的根目录，执行npm link react-native操作，接着执行npm instal的操作。
+
+5、如果没有找到对应模块的话，会向sinopia服务器发送请求，
+
+6、请求下载需要的模块，并放入指定的目录中，
+
+7、待模块下载完毕后， 执行4中的操作。
+
+8、如果sinopia服务器也没有的话，会像npm服务器发起请求
+
+9、待模块下载完后，执行4中的操作。
+
+10、然后，在将改模块publish到sinopia服务器上。
+
 
 ##二、开发中
 
