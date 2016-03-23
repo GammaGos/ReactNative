@@ -312,7 +312,7 @@ react_native_modules
                 react-native-cli
 
 ```
-还是在用户目录下创建react_native_modules、prex_node_modules两个目录结构。react_native_modules的目录和上面sinopia发布模块用的是一样的结构，都是用来存放模块的。默认的全局安装目录在“/usr/local/lib/node_modules”，这里的prex_node_modules目录就是用替换原有的全局安装目录，这样做的好处是不需要每次装全局模块时都要sudu。
+还是在用户目录下创建react_native_modules、prex_node_modules两个目录结构。react_native_modules的目录和上面sinopia发布模块用的是一样的结构，都是用来存放模块的。默认的全局安装目录在“/usr/local/lib/node_modules”，这里的prex_node_modules目录就是用替换原有的全局安装目录，这样做的好处是不需要每次装全局模块时都要sudo。
 
 #####-rnvm的执行流程
 
@@ -372,3 +372,98 @@ c、通过拷贝获得
 基于上面的图形，这里做简短的描述。总体分为两个大的部分，一个是server端，一个是client端。server端是指sinopia服务所在的端，主要负责提供NPM私有服务。在搭建该端的时候，需将常用的react-native版本和react-native-cli版本都推送到该服务器上，便于之后客户端的使用。client端是指用户端也就是开发者端。该端负责nodejs、npm、rnvm等环境的搭建以及React Native项目的构建。该端属于消费端是主战场。在该端主要发生的逻辑为，开发者先构建一个React Native项目，然后使用rnvm来安装依赖模块，rnmv接着在指定的目录下判断是否有合适的模块，有的话会先做npm link的操作，再做npm install的操作，没有的话会向sinopia服务器发送请求，请求下载需要的模块，并放入指定的目录中，待模块下载完毕后，在执行npm link操作和npm install操作，来达到依赖模块的安装。
 
 ##二、开发中
+
+###面临的问题
+
+通常项目中，App需要开发Android和iOS两个版本,经常会用到一些图片，并需要将这些图片打入App中。当开发iOS版本时，需要手动加载这些图片资源到xcode中。当开发Android版本时又需要手动的加载一次。这样，当某天某个图片需要更新时，就需要对Android和iOS都进行修改。如果要是能够让两个版本引用同一个图片,那么就会使开发变的简便。
+
+###解决办法
+
+####起初的解决办法
+
+我们可以借助shell脚本创建、搬运、解析文件的能力，加上一些自定义的规则，来实现Andorid、iOS两个版本引用同一个图片的功能。
+
+下面来简短的介绍下实现思想
+
+iOS版本在Images.xcassets文件夹中创建符合规则的图片文件以及文件夹。Android版本在drawable-hdpi,mdpi等文件夹中创建符合规则的图片。那么这个规则是什么呢，我们可以通过使用json形式的congfig文件来定义这个规则，格式如下:
+
+```
+{
+  "resources":[
+    {
+      //资源的别名
+      "name":"rose",
+      //资源的类型
+      "type":"image",
+      //资源路径，可以相对也可以绝对
+      "url":"resources/image/rose.png",
+      ......
+    },
+    {
+      "name":"flower",
+      "type":"image",
+      "url":"http://host/path/imagename.jpg"
+      ......
+    }
+  ]
+}
+```
+
+
+然后再借助Shell的jq插件，通过解析刚才定义的congfig文件来获得约定的规则，获得规则的主要shell代码如下：
+
+```
+......
+
+index=0;
+flag=0;
+while ((flag<=0));do
+read imgname <<<  $(cat ./../../resources/image/resource.json |./jq '.[]' |./jq '.['$index']'|./jq '.name')
+read url <<<  $(cat ./../../resources/image/resource.json |./jq '.[]' |./jq '.['$index']'|./jq '.url')
+ done
+ /**省略创建图片的代码**/
+```
+待获得规则后，就可以根据规则生成各个版本对应的图片。到此，shell脚本的主体逻辑已经介绍完成，是时候把它融合到两个版本的实际项目中运行了。
+
+在Android版本中，我们可以通过开发一个Unix executable文件，来封装自己的run-android运行命令，代码如下：
+
+```
+/**省略前面解析json与创建图片的代码**/
+cd ../<android项目路径>/
+react-native run-android
+```
+待启动Android项目后，图片顺利的读取到了。
+
+在iOS版本中，我们可以通过开发一个shell脚本，并把它添加到Xcode项目的run script phase中，待启动iOS项目后，却发现资源文件根本读不到。这是为什么呢?
+
+####原因分析
+
+#####-iOS中React Native项目启动顺序：
+
++	在启动React Native Xcode项目时，会先加载项目所依赖的React项目，接着运行React项目中事先定义好的run script phase，最后运行packger.sh。
+
++	其中packger.sh中我们看到如下的代码：
+
+```
+node "$THIS_DIR/../local-cli/cli.js" start "$@"
+```
++	接着我们找到了cli.js，看到里面调用了好多模块。其中default.config.js模块指定了JS和资源的加载路径，server.js模块除了指定server监听的默认端口外还有检测node版本等功能，runServer.js模块用来启动server。
+
++	待server启动成功后，才运行到iOS native code。也就是这个时候，才会运行Xcode项目中，事先定义好的run script phase中指定的shell脚本，而在这个时候，在shell脚本中创建资源路径是没有用的。所以就会出现了上面资源文件读不到的情况。
+
+#####-Android中React Native项目启动顺序：
+
++	首先执行上面封装好的Unix executable文件，该文件中会调用资源文件生成的代码，将资源文件生成。
+
++	然后在该文件中会继续再执行react-native run-android命令，此时根据react-native-cli模块的package.json中bin的定义，调用node.js执行$prefix/react-native-cli/index.js。
+
++	在index.js中会先加载cli.js模块然后运行其run方法。在cli.js模块中做的工作和上面分析的iOS中的cli.js做的工作是一样的。
+
++	待server启动成功后，才会运行到Android native code,所以运行封装好的Unix executable是不会导致资源失效的，因为资源生成代码已经在react-native run-android命令运行之前被执行过了。
+
+
+
+####最终的解决办法
+
+为了让资源生成的代码执行顺序提前，可以先增加一个名为AppPrepare的Command类型项目，来运行此Shell。然后在Xcode项目Target Dependencies中添加AppPrepare项目，这样就会先运行AppPrepare的项目后才会运行Xcode项目，从而达到了我们的目的。
+![](../images/appprepare.png)
