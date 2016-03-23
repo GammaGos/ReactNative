@@ -234,7 +234,7 @@ $ npm publish
 $ sinopia -l IP地址:端口
 ```
 
-####-配置React Native的sinopia服务器
+#####-配置React Native的sinopia服务器
 
 对于react-native的配置，官网建议修改packages和max_body_size的配置如下：
 
