@@ -128,7 +128,7 @@ var documentedCommands = {
 };
 ```
 看到这里，也就眼前豁然开朗起来，原来除“init”命令外，其它命令都在这里啦，这让笔者明白了一件事情：也就是说“init”可以在任何地方使用，而其他命令只能在React Native项目的根目录下使用 ，不得不佩服Facebook设计之巧妙。
-与此同时，另一件重要的事情也就显得清晰可见了。那就是在“React Native”的开发中，其实有两个“react-native”，一个是的“react-native-cli”生成的全局的react-native命令，一个是在初始化项目时安装的“react-native”模块，即在应用开发中通过“require('react-native')”所引用的模块。这两个简单区别便是，一个是全局的模块，一个是局部的模块。全局模块状只提供了一个“init”方法，而局部模块提供了除“init”方法外的所有命令以及React Native开发中用到的所有功能。
+与此同时，另一件重要的事情也就显得清晰可见了。那就是在“React Native”的开发中，其实有两个“react-native”，一个是的“react-native-cli”生成的全局的react-native命令，一个是在初始化项目时安装的“react-native”模块，即在应用开发中通过“require('react-native')”所引用的模块。这两个简单区别便是，一个是全局的模块，一个是局部的模块。全局模块中只提供了一个“init”方法，而局部模块提供了除“init”方法外的所有命令以及React Native开发中用到的所有功能。
 
 经过上面对"react-native-cli"与“react-native”的分析，可以看出Facebook应该是推荐“react-native”模块局部化，所以不论在React Native项目初始化的过程中，还是clone已有的React Native项目，都需要在当前项目下下载和安装“react-native”模块，使得React Native 项目占用的空间越来越大。
 
