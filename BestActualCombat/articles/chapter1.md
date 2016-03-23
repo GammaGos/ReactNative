@@ -369,6 +369,8 @@ c、通过拷贝获得
 ####3、完整架构
 ![](../images/rnvm.png)
 
+图1 基于rnvm的开发架构图
+
 基于上面的图形，这里做简短的描述。总体分为两个大的部分，一个是server端，一个是client端。server端是指sinopia服务所在的端，主要负责提供NPM私有服务。在搭建该端的时候，需将常用的react-native版本和react-native-cli版本都推送到该服务器上，便于之后客户端的使用。client端是指用户端也就是开发者端。该端负责nodejs、npm、rnvm等环境的搭建以及React Native项目的构建。该端属于消费端是主战场。在该端主要发生的逻辑为，开发者先构建一个React Native项目，然后使用rnvm来安装依赖模块，rnmv接着在指定的目录下判断是否有合适的模块，有的话会先做npm link的操作，再做npm install的操作，没有的话会向sinopia服务器发送请求，请求下载需要的模块，并放入指定的目录中，待模块下载完毕后，在执行npm link操作和npm install操作，来达到依赖模块的安装。
 
 ##二、开发中
@@ -467,3 +469,5 @@ node "$THIS_DIR/../local-cli/cli.js" start "$@"
 
 为了让资源生成的代码执行顺序提前，可以先增加一个名为AppPrepare的Command类型项目，来运行此Shell。然后在Xcode项目Target Dependencies中添加AppPrepare项目，这样就会先运行AppPrepare的项目后才会运行Xcode项目，从而达到了我们的目的。
 ![](../images/appprepare.png)
+
+图2 Xcode项目依赖图
