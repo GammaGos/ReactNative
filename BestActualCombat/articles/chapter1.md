@@ -278,14 +278,15 @@ react_native_modules
 其中react_native_modules为我们在用户目录下创建文件夹。之所以设计成这样的结构是为了我们方便现在NPM服务器上的模块。如我们要下载0.19.0版本的react-native模块，我们只需要创建react_native_modules\react-native\v0.19.0文件夹，然后在该文件夹中执行
 
 ```
-npm install react-native@0.19.0
+$ npm install react-native@0.19.0
 ```
 即可完成从NPM服务器上对该模块的下载。接下来进入到node_modules\react-native目录，执行
 
 ```
-npm publish
+$ npm set registry http://host:port/ //要记得切换到sinopia服务器哦，否则会将模块发在NPM服务器上而不是sinopia服务器上
+
+$ npm publish
 ```
-在上面的执行过程中，要记得切换npm registry，否则会将模块发在NPM服务器上而不是sinopia服务器上。
 
 ####2、实现多版本管理
 
