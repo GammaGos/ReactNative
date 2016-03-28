@@ -312,7 +312,7 @@ c、通过拷贝获得
 #####-rnvm的目录结构
 
 ```
-prex_node_modules
+prefix_node_modules
 	node_modules
 		react-native
 		react-native-cli			
@@ -330,7 +330,7 @@ react_native_modules
                 react-native-cli
 
 ```
-还是在用户目录下创建react_native_modules、prex_node_modules两个目录结构。react_native_modules的目录和上面sinopia发布模块用的是一样的结构，都是用来存放模块的。默认的全局安装目录在“/usr/local/lib/node_modules”，这里的prex_node_modules目录就是用替换原有的全局安装目录，这样做的好处是不需要每次装全局模块时都要sudo。
+还是在用户目录下创建react_native_modules、prefix_node_modules两个目录结构。react_native_modules的目录和上面sinopia发布模块用的是一样的结构，都是用来存放模块的。默认的全局安装目录在“/usr/local/lib/node_modules”，这里的prefix_node_modules目录就是用替换原有的全局安装目录，这样做的好处是不需要每次装全局模块时都要sudo。
 
 #####-rnvm的执行流程
 
@@ -342,7 +342,7 @@ react_native_modules
 
 ```
 $ cd mycloneproject
-$ npm config set prefix ~/prex_node_modules/node_modules
+$ npm config set prefix ~/prefix_node_modules/node_modules
 $ npm set registry http://host:port/
 $ rnvm use 0.20.0
 ```
@@ -350,7 +350,7 @@ $ rnvm use 0.20.0
 
 a、先进入mycloneproject项目的根目录。
 
-b、设置全局模块安装目录为~/prex_node_modules/node_modules。
+b、设置全局模块安装目录为~/prefix_node_modules/node_modules。
 
 c、设置npm的镜像指向自己的sinopia服务器，这样之后的所有npm命令就会从sinopia服务器获取模块了。
 
@@ -370,7 +370,7 @@ e、rnvm接收到两个参数之后的行为：
 
 这只是个use命令的执行分析。也可以像nvm一样，实现rnvm install、rnvm ls、rnvm current等命令。
 
-rnmv的github地址：[rnvm](https://github.com/GammaGos/ReactNative/rnvm/)
+rnmv的github地址：[rnvm](https://github.com/GammaGos/rnvm/)
 
 
 
