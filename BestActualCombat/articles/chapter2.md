@@ -1,6 +1,6 @@
 # ReactNative性能调优
 
-自从ReactNative出世,虽然官方一直尽可能的优化其性能，为了能让其媲美原生App的速度，但是现实感觉有点不尽人意。接下来介绍下实践中遇到的一些性能问题以及优化方案。注意以下对性能参数的依据是来自于React-Native自带的Perf Monitor.
+自从ReactNative出世,虽然官方一直尽可能的优化其性能，为了能让其媲美原生App的速度，但是现实感觉有点不尽人意。接下来介绍下实践中遇到的一些性能问题以及优化方案。以下对性能参数的依据是来自于React-Native自带的Perf Monitor.
 
 ### 1.Navigator页面切换动画优化
 **场景:** 在Navigator还没出来时，导航器是由NavigatorIOS来实现的，当时觉得页面切换动画很流畅，但是一旦用Navigator后，发现定义的切换动画会使JS线程出现严重的掉帧(卡顿现象)。
