@@ -1,4 +1,4 @@
-## React Native Bundle拆分
+### React Native Bundle 拆分的尝试
 
 ### 引言
 
@@ -210,7 +210,16 @@ react-native/packager/react-packager/src/Bundler/index.js
 ```
 文件中对querystring进行拦截，并实现其过滤功能。
 
-然而在实际的拆包中会发现，packager中打出的包都会将模块名称替换为数字id。这导致拆出的包中，引入不到某些模块，因为不是在一起打包，模块的id都对不上，或者会出现重复的情况。
+然而在实际的拆包中会发现，packager中打出的包都会将模块名称替换为数字id。如：
+
+```
+__d(14,function(s,t,i,o){"use strict";var r={OS:"ios"};i.exports=r});
+
+__d(30,function(n,t,o,r){"use strict";var u,e=t(31);u=e.now?function(){return e.now()}:function(){return Date.now()},o.exports=u});
+
+
+```
+这导致拆出的包中，引入不到某些模块，因为不是在一起打包，模块的id都对不上，或者会出现重复的情况。
 
 我们的思路是打包的时候不进行id的替换，依然使用原有的模块名称，做到类似在web中requireJS使用的那样。
 找到文件
