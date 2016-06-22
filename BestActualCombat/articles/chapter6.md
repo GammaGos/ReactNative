@@ -15,7 +15,7 @@ Hello, 大家好! 很高兴今天能在这里跟大家一起交流。首先，�
 +	Moles 框架的功能
 +	Moles 框架的原理简析
 +	Moles 框架的使用
-+	Moles 框架的案例 
++	Moles 框架的案例
 +	开源计划。
 下面我们就步入正题吧。
 ### React Native的现状
@@ -77,9 +77,11 @@ Moles框架的功能可以用下图来说明
 ```
 class HelloWorld extends Component{
   render(){
-    <View>
-      <Text>HelloWorld</Text>
-    </View>
+    return(
+        <View>
+          <Text>HelloWorld</Text>
+        </View>
+      )
   }
 }
 ```
@@ -89,9 +91,11 @@ class HelloWorld extends Component{
 ```
 class HelloWorld extends Component{
   render(){
-    <Div>
-      <Span>HelloWorld</Span>
-    </Div>
+    return(
+      <Div>
+        <Span>HelloWorld</Span>
+      </Div>
+    )
   }
 }
 ```
@@ -149,15 +153,15 @@ $ moles run-ios
 打包、拆包项目
 
 ```
-$ moles packer 
+$ moles packer
 
- 	--input /path/to/project 
+ 	--input /path/to/project
 
-    --entry index.ios.js 
+    --entry index.ios.js
 
-    --output /path/to/build 
+    --output /path/to/build
 
-    --bundle bu.bundle 
+    --bundle bu.bundle
 
     --common true
 
